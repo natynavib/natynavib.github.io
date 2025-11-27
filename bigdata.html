@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Big Data – LLA Esports</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050814;
+      --bg-alt: #0b1020;
+      --card: #11182a;
+      --card-soft: #151c30;
+      --accent: #7c4dff;
+      --accent-soft: rgba(124, 77, 255, 0.25);
+      --accent-2: #26c6da;
+      --text: #f5f7ff;
+      --muted: #a7b0d0;
+      --danger: #ff5252;
+      --success: #66bb6a;
+      --border-soft: #272f45;
+      --chip-bg: #1a2336;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #101a35 0, #050814 45%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(180deg, #050814 0, #050814 40%, #0a1020 100%);
+      border-right: 1px solid var(--border-soft);
+      padding: 18px 18px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 30% 20%, #ffffff 0, #7c4dff 35%, #11182a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e0e4ff;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 6px;
+      margin-top: 8px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .nav-item {
+      border-radius: 999px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: default;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, var(--accent-soft), transparent);
+      color: #ffffff;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 18px rgba(38, 198, 218, 0.9);
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      color: var(--muted);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-soft);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .sidebar-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      font-size: 11px;
+      color: #d0d6ff;
+    }
+
+    .sidebar-tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(124, 77, 255, 0.9);
+    }
+
+    /* Main */
+    .main {
+      padding: 22px 22px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    @media (max-width: 600px) {
+      .main {
+        padding: 14px;
+      }
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .topbar-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .topbar-heading {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .topbar-heading span {
+      color: var(--accent-2);
+    }
+
+    .topbar-caption {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .topbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background: var(--chip-bg);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #40c4ff);
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn-primary span.icon {
+      font-size: 14px;
+    }
+
+    /* Sections */
+    .section {
+      background: linear-gradient(145deg, rgba(15, 22, 42, 0.95), rgba(6, 10, 26, 0.98));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-pill {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      background: rgba(17, 24, 48, 0.9);
+    }
+
+    .section-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .section-tagline {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .section-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 1100px) {
+      .kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 700px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .kpi-card {
+      background: radial-gradient(circle at top left, rgba(124, 77, 255, 0.12), var(--card));
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 10px 10px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .kpi-value {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .kpi-trend {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(102, 187, 106, 0.12);
+      color: var(--success);
+    }
+
+    .kpi-trend.down {
+      background: rgba(255, 82, 82, 0.12);
+      color: var(--danger);
+    }
+
+    .kpi-footnote {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .mini-chart-line {
+      margin-top: 4px;
+      height: 26px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(124, 77, 255, 0.15), rgba(124, 77, 255, 0.02));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mini-chart-line::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 77, 255, 0.5);
+      opacity: 0.5;
+    }
+
+    /* 2. Rendimiento por rol */
+    .grid-two {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-two {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .role-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .role-table thead {
+      background: rgba(17, 24, 48, 0.95);
+    }
+
+    .role-table th,
+    .role-table td {
+      padding: 7px 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .role-table th {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .role-pill {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(124, 77, 255, 0.12);
+      color: #e1dcff;
+    }
+
+    .eff-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #102a43;
+      color: #b3e5fc;
+    }
+
+    .fake-scatter {
+      height: 110px;
+      border-radius: var(--radius-md);
+      background: radial-gradient(circle at top, rgba(124, 77, 255, 0.26), #050814);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fake-scatter::before,
+    .fake-scatter::after {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255, 255, 255, 0.06);
+    }
+
+    .dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      box-shadow: 0 0 10px rgba(38, 198, 218, 0.9);
+      opacity: 0.9;
+    }
+
+    .dot.alt {
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(124, 77, 255, 0.9);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(13, 20, 40, 0.9);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .legend-dot.blue {
+      background: var(--accent-2);
+    }
+
+    .legend-dot.purple {
+      background: var(--accent);
+    }
+
+    /* 3. Control de visión */
+    .vision-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 1000px) {
+      .vision-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .heatmap-card {
+      background: radial-gradient(circle at top, rgba(38, 198, 218, 0.16), var(--card-soft));
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .heatmap-map {
+      height: 170px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 20% 20%, #263859, #050814 70%);
+      position: relative;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .heat-blob {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 999px;
+      filter: blur(16px);
+      opacity: 0.6;
+    }
+
+    .heat-blob.green {
+      background: rgba(76, 175, 80, 0.8);
+    }
+
+    .heat-blob.red {
+      background: rgba(244, 67, 54, 0.9);
+    }
+
+    .heat-blob.cyan {
+      background: rgba(38, 198, 218, 0.8);
+    }
+
+    .heat-blob.purple {
+      background: rgba(156, 39, 176, 0.85);
+    }
+
+    /* 4. Análisis por parche */
+    .line-chart {
+      height: 140px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(124, 77, 255, 0.18), rgba(3, 9, 25, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .line-chart::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.06);
+    }
+
+    .line-path {
+      position: absolute;
+      inset: 20px 18px 28px 18px;
+      background: linear-gradient(90deg, transparent 0, rgba(255, 255, 255, 0.25) 18%, transparent 24%, rgba(255, 255, 255, 0.2) 52%, transparent 58%, rgba(255, 255, 255, 0.25) 80%, transparent 100%);
+      mix-blend-mode: screen;
+      opacity: 0.68;
+    }
+
+    /* 5. Scrims vs oficiales */
+    .scrim-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .scrim-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .scrim-card {
+      background: var(--card-soft);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .scrim-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #101627;
+      color: var(--muted);
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .scrim-symbol {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent-2);
+    }
+
+    .scrim-symbol.red {
+      background: var(--danger);
+    }
+
+    .scrim-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .scrim-bar {
+      margin-top: 4px;
+      height: 7px;
+      border-radius: 999px;
+      background: #050814;
+      overflow: hidden;
+    }
+
+    .scrim-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #26c6da, #7c4dff);
+    }
+
+    /* 6. Modelos predictivos */
+    .predict-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 1000px) {
+      .predict-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .timeline-chart {
+      height: 130px;
+      border-radius: var(--radius-md);
+      background: radial-gradient(circle at top, rgba(102, 187, 106, 0.18), #050814);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-line {
+      position: absolute;
+      inset: 20px 16px 32px 20px;
+      background: linear-gradient(90deg, transparent 0, rgba(102, 187, 106, 0.4) 34%, rgba(66, 165, 245, 0.7) 70%, rgba(124, 77, 255, 0.9) 100%);
+      mask-image: linear-gradient(0deg, transparent 0, #000 18%, #000 88%, transparent 100%);
+      opacity: 0.9;
+    }
+
+    .tree-card {
+      background: #0c1224;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 9px 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .tree-node {
+      margin-left: 8px;
+      position: relative;
+      padding-left: 12px;
+      margin-top: 4px;
+    }
+
+    .tree-node::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .tree-node::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 8px;
+      width: 10px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .tree-label {
+      background: #151c30;
+      border-radius: 999px;
+      padding: 2px 7px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 4px;
+    }
+
+    .tree-chip {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(38, 198, 218, 0.16);
+      color: #80deea;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">LL</div>
+        <div class="brand-text">
+          <div class="brand-title">LLA Analytics</div>
+          <div class="brand-sub">Sistema Big Data Deportivo</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="nav-section-title">Panel</div>
+        <ul class="nav-list">
+          <li class="nav-item active">
+            <span class="nav-dot"></span>
+            Overview táctico
+            <span class="nav-badge">MVP</span>
+          </li>
+          <li class="nav-item">
+            ▸ Rendimiento por rol
+          </li>
+          <li class="nav-item">
+            ▸ Visión & mapa
+          </li>
+          <li class="nav-item">
+            ▸ Parche & meta
+          </li>
+          <li class="nav-item">
+            ▸ Scrims vs oficiales
+          </li>
+          <li class="nav-item">
+            ▸ Modelos predictivos
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        Mockup de dashboard para la
+        <strong>Liga Latinoamérica (LLA)</strong> basado en un sistema Big Data Deportivo.
+        <div class="sidebar-tag">
+          <span class="sidebar-tag-dot"></span>
+          Vista conceptual para coaches, analistas y jugadores.
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <div class="topbar-kicker">Dashboard táctico · Big Data Deportivo</div>
+          <div class="topbar-heading">
+            Panel analítico LLA – <span>MVP</span>
+          </div>
+          <div class="topbar-caption">
+            Vista integrada para apoyar decisiones tácticas de coaches, analistas y jugadores.
+          </div>
+        </div>
+        <div class="topbar-controls">
+          <div class="chip">Split actual: Apertura · Parche 14.X</div>
+          <div class="chip">Equipo: Placeholder LLA Pro</div>
+          <button class="btn-primary">
+            <span class="icon">⚡</span>
+            Simular semana competitiva
+          </button>
+        </div>
+      </header>
+
+      <!-- 1. VISTA GENERAL DEL EQUIPO -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 1. Vista general del equipo
+              <span class="section-pill">KPIs globales + tendencias</span>
+            </div>
+            <div class="section-subtitle">
+              Resumen de rendimiento competitivo: winrate, early game, oro, objetivos y estabilidad por parche.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización recomendada: tarjetas KPI + gráfico de líneas por parche.
+          </div>
+        </div>
+
+        <div class="section-content">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Winrate global</div>
+              <div class="kpi-value">
+                63%
+                <span class="kpi-trend">+8% último split</span>
+              </div>
+              <div class="kpi-footnote">Comparado con promedio LLA</div>
+              <div class="mini-chart-line"></div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">Early game rating</div>
+              <div class="kpi-value">
+                78 / 100
+                <span class="kpi-trend">Meta estable</span>
+              </div>
+              <div class="kpi-footnote">Basado en oro, objetivos y tempo inicial</div>
+              <div class="mini-chart-line"></div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">Dif. oro @10</div>
+              <div class="kpi-value">
+                +1.3K
+                <span class="kpi-trend">+400g</span>
+              </div>
+              <div class="kpi-footnote">Ventaja económica promedio minuto 10</div>
+              <div class="mini-chart-line"></div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">Objetivos / partida</div>
+              <div class="kpi-value">
+                6.4
+                <span class="kpi-trend">Drag / Heraldo / Nash</span>
+              </div>
+              <div class="kpi-footnote">Objetivos mayores asegurados</div>
+              <div class="mini-chart-line"></div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">KDA general</div>
+              <div class="kpi-value">
+                3.9
+                <span class="kpi-trend">+0.6</span>
+              </div>
+              <div class="kpi-footnote">Promedio de todo el roster</div>
+              <div class="mini-chart-line"></div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-label">KPIs por parche</div>
+              <div class="kpi-value">
+                Estable
+                <span class="kpi-trend down">Meta cambiante</span>
+              </div>
+              <div class="kpi-footnote">Consistencia entre versiones 14.1 – 14.4</div>
+              <div class="mini-chart-line"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. RENDIMIENTO INDIVIDUAL POR ROL -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 2. Rendimiento individual por rol
+              <span class="section-pill">CS/min · DPM · KP% · KDA</span>
+            </div>
+            <div class="section-subtitle">
+              Análisis detallado de cada jugador según su rol competitivo: farmeo, impacto en peleas y eficiencia por campeón.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización: tabla + scatter plot simulado + ranking por rol.
+          </div>
+        </div>
+
+        <div class="section-content grid-two">
+          <div>
+            <table class="role-table">
+              <thead>
+                <tr>
+                  <th>Rol</th>
+                  <th>Jugador</th>
+                  <th>CS/min</th>
+                  <th>DPM</th>
+                  <th>KP%</th>
+                  <th>KDA</th>
+                  <th>Eficiencia campeón</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="role-pill">Top</span></td>
+                  <td>Player TOP</td>
+                  <td>7.2</td>
+                  <td>530</td>
+                  <td>58%</td>
+                  <td>3.4</td>
+                  <td><span class="eff-tag">Fuerte en weakside</span></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">Jungla</span></td>
+                  <td>Player JG</td>
+                  <td>5.3</td>
+                  <td>470</td>
+                  <td>71%</td>
+                  <td>4.1</td>
+                  <td><span class="eff-tag">Alta presencia temprana</span></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">Mid</span></td>
+                  <td>Player MID</td>
+                  <td>7.8</td>
+                  <td>620</td>
+                  <td>65%</td>
+                  <td>3.9</td>
+                  <td><span class="eff-tag">Control de wave estable</span></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">ADC</span></td>
+                  <td>Player ADC</td>
+                  <td>8.5</td>
+                  <td>710</td>
+                  <td>72%</td>
+                  <td>4.5</td>
+                  <td><span class="eff-tag">DPS principal en TF</span></td>
+                </tr>
+                <tr>
+                  <td><span class="role-pill">Support</span></td>
+                  <td>Player SUP</td>
+                  <td>1.6</td>
+                  <td>280</td>
+                  <td>79%</td>
+                  <td>3.7</td>
+                  <td><span class="eff-tag">Visión + engage</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="fake-scatter">
+              <!-- puntos simulados -->
+              <div class="dot" style="top: 66%; left: 20%;"></div>
+              <div class="dot alt" style="top: 40%; left: 32%;"></div>
+              <div class="dot" style="top: 30%; left: 58%;"></div>
+              <div class="dot alt" style="top: 55%; left: 72%;"></div>
+              <div class="dot" style="top: 22%; left: 42%;"></div>
+              <div class="dot alt" style="top: 68%; left: 86%;"></div>
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <span class="legend-dot.blue"></span>
+                CS/min vs DPM (por rol)
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot.purple"></span>
+                Puntos con alto KP%
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CONTROL DE VISIÓN -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 3. Control de visión
+              <span class="section-pill">Heatmap de wards</span>
+            </div>
+            <div class="section-subtitle">
+              Análisis espacial de la visión: wards colocados, eliminados y zonas clave del mapa comparadas con rivales directos.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización recomendada: heatmap tipo mapa de Summoner’s Rift (simulado).
+          </div>
+        </div>
+
+        <div class="section-content vision-grid">
+          <div class="heatmap-card">
+            <div class="kpi-label">Heatmap · Wards colocados y denegados</div>
+            <div class="heatmap-map">
+              <div class="heat-blob.green" style="top: 18%; left: 16%;"></div>
+              <div class="heat-blob.cyan" style="top: 40%; left: 38%;"></div>
+              <div class="heat-blob.purple" style="top: 60%; left: 65%;"></div>
+              <div class="heat-blob.red" style="top: 26%; left: 72%;"></div>
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#4caf50;"></span>
+                Zonas de visión ofensiva
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#f44336;"></span>
+                Zonas de denegación rival
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#26c6da;"></span>
+                Control río / objetivos
+              </div>
+            </div>
+          </div>
+
+          <div class="heatmap-card">
+            <div class="kpi-label">Comparación vs rivales directos (resumen)</div>
+            <div class="scrim-stat-row">
+              <span>Wards/min propios</span>
+              <span>1.9</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 72%;"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>Wards/min rivales</span>
+              <span>1.6</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 60%; background:linear-gradient(90deg,#ff5252,#ff8a65);"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>Control visión dragón</span>
+              <span>68%</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 68%;"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>Control visión Nashor</span>
+              <span>74%</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 74%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ANÁLISIS POR PARCHE -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 4. Análisis por parche
+              <span class="section-pill">Meta & estabilidad</span>
+            </div>
+            <div class="section-subtitle">
+              Evolución de KPIs clave según versión del juego: winrate, daño y objetivos.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización: gráfico de líneas por parche (representación ficticia).
+          </div>
+        </div>
+
+        <div class="section-content">
+          <div class="line-chart">
+            <div class="line-path"></div>
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#26c6da;"></span>
+              Winrate por parche
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#66bb6a;"></span>
+              Objetivos / partida
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#7c4dff;"></span>
+              DPM promedio
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. SCRIMS VS OFICIALES -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 5. Scrims vs Oficiales
+              <span class="section-pill">Consistencia competitiva</span>
+            </div>
+            <div class="section-subtitle">
+              Comparación del rendimiento entre entrenamientos privados (scrims) y partidas oficiales de la LLA.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización: comparativos “lado a lado” + barras tipo boxplot simplificado.
+          </div>
+        </div>
+
+        <div class="section-content scrim-grid">
+          <div class="scrim-card">
+            <div class="scrim-badge">
+              <span class="scrim-symbol"></span>
+              Scrims · Entrenamiento
+            </div>
+            <div class="scrim-stat-row">
+              <span>KDA promedio</span>
+              <span>4.3</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 78%;"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>BPM (behavior per minute)</span>
+              <span>Alta agresividad</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 82%;"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>Objetivos / partida</span>
+              <span>7.2</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 76%;"></div>
+            </div>
+          </div>
+
+          <div class="scrim-card">
+            <div class="scrim-badge">
+              <span class="scrim-symbol red"></span>
+              Partidas oficiales
+            </div>
+            <div class="scrim-stat-row">
+              <span>KDA promedio</span>
+              <span>3.6</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 64%; background:linear-gradient(90deg,#ff5252,#ff8a65);"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>BPM (behavior per minute)</span>
+              <span>Más controlado</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 60%; background:linear-gradient(90deg,#ff5252,#ff8a65);"></div>
+            </div>
+
+            <div class="scrim-stat-row">
+              <span>Objetivos / partida</span>
+              <span>6.0</span>
+            </div>
+            <div class="scrim-bar">
+              <div class="scrim-bar-fill" style="width: 64%; background:linear-gradient(90deg,#ff5252,#ff8a65);"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. MODELOS PREDICTIVOS -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">
+              ⭐ 6. Modelos predictivos
+              <span class="section-pill">Win Probability & condiciones de victoria</span>
+            </div>
+            <div class="section-subtitle">
+              Representación conceptual de modelos que estiman la probabilidad de victoria a lo largo de la partida.
+            </div>
+          </div>
+          <div class="section-tagline">
+            Visualización: curva de probabilidad + diagrama de árbol simplificado.
+          </div>
+        </div>
+
+        <div class="section-content predict-grid">
+          <div>
+            <div class="kpi-label">Win Probability Timeline (ejemplo conceptual)</div>
+            <div class="timeline-chart">
+              <div class="timeline-line"></div>
+            </div>
+            <div class="legend">
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#66bb6a;"></span>
+                Probabilidad de victoria según oro + objetivos
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot" style="background:#7c4dff;"></span>
+                Ventanas críticas (min 10–20 / Nashor)
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-card">
+            <div class="kpi-label" style="margin-bottom:4px;">Condiciones de victoria más frecuentes (diagrama simplificado)</div>
+
+            <div class="tree-node">
+              <div class="tree-label">
+                ≥ +1k oro @14
+                <span class="tree-chip">Winrate ~ 72%</span>
+              </div>
+              <div class="tree-node">
+                <div class="tree-label">
+                  + control visión Nashor
+                  <span class="tree-chip">Alta prob.</span>
+                </div>
+              </div>
+              <div class="tree-node">
+                <div class="tree-label">
+                  - dragón temprano
+                  <span class="tree-chip" style="background:rgba(255,82,82,0.15);color:#ff8a80;">Riesgo</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tree-node">
+              <div class="tree-label">
+                Even oro @14
+                <span class="tree-chip">Winrate ~ 50%</span>
+              </div>
+              <div class="tree-node">
+                <div class="tree-label">
+                  Comps de escalado
+                  <span class="tree-chip">Depende de late</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tree-node">
+              <div class="tree-label">
+                -1k oro @14
+                <span class="tree-chip" style="background:rgba(255,82,82,0.15);color:#ff8a80;">Winrate ~ 28%</span>
+              </div>
+              <div class="tree-node">
+                <div class="tree-label">
+                  Draft con buen engage
+                  <span class="tree-chip">Opciones de comeback</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:8px;font-size:10px;color:var(--muted);">
+              Nota: todos los valores y umbrales mostrados en este mockup son ilustrativos y no corresponden a datos reales de la LLA.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
